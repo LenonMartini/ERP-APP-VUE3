@@ -1,5 +1,5 @@
 <template>
-  <v-container fluid class="fill-height login-bg">
+  <v-container fluid class="fill-height ">
     <v-row align="center" justify="center">
       <v-col cols="12" sm="8" md="4">
         <v-card elevation="6" class="pa-6">
