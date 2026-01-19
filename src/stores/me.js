@@ -9,18 +9,19 @@ export const useMeStore = defineStore("me", {
     return {}
   },
   actions: {
-    async getMe(){
+    async getMe() {
       const authStore = useAuthStore();
       await api.get('/auth/me')
 
-      .then((r) => {
-        authStore.setUser(r.data.user);
-        authStore.setToken(r.data.token);
+        .then((r) => {
+          authStore.setUser(r.data.data.user);
+          authStore.setToken(r.data.data.token);
+          authStore.setPreferences(r.data.data.preferences);
 
-      })
-      .catch((e) => {
-        authStore.clearAuth();
-      });
+        })
+        .catch((e) => {
+          authStore.clearAuth();
+        });
     }
   },
 

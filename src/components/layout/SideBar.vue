@@ -10,7 +10,7 @@
       <v-list-item
         title="Dashboard"
         prepend-icon="mdi-view-dashboard"
-        to="/dashboard"
+        to="/painel"
         router
       />
        <!-- Cadastros com Submenu -->
@@ -105,9 +105,9 @@
         </template>
 
         <v-list-item
-          title="Tenants"
+          title="Empresas"
           prepend-icon="mdi-account-group"
-          to="/settings/profile"
+          to="/painel/tenants"
           router
         />
         <v-list-item
@@ -115,7 +115,7 @@
           prepend-icon="mdi-account-multiple"
           to="/settings/profile"
           router
-        />       
+        />
 
         <v-list-item
           title="Permissões"

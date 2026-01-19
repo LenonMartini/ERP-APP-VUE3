@@ -11,22 +11,25 @@ export const useAuthStore = defineStore("auth", {
   state: () => ({
     user: null,
     token: null,
+    preferences: null
   }),
   actions: {
     async login(payload) {
-      try{
+      try {
         const notification = useNotificationStore();
         const response = await AuthService.login(payload.email, payload.password);
 
-        if(response.token){
-          this.user = response.user;
-          this.token = response.token;
-          Cookie.setToken(response.token);
+        if (response.data.token) {
+
+          this.user = response.data.user
+          this.token = response.data.token;
+          this.preferences = response.data.preferences;
+          Cookie.setToken(response.data.token);
 
           return true;
         }
 
-      }catch(e){
+      } catch (e) {
         const notification = useNotificationStore();
         notification.notify(e.response.data.message, 'error');
 
@@ -40,10 +43,32 @@ export const useAuthStore = defineStore("auth", {
     async setToken(token) {
       this.token = await token;
     },
+    async setPreferences(preferences) {
+      this.preferences = await preferences;
+    },
+    async setThemePreference(key, value) {
+      const pref = this.preferences.find(p => p.key === key)
+
+      if (pref) {
+        pref.value = value
+      } else {
+        this.preferences.push({ key, value })
+      }
+
+      try {
+
+        const response = await AuthService.setTheme(pref.id, value);
+        //console.log(response)
+
+      } catch (e) {
+        const notification = useNotificationStore();
+        notification.notify(e.response.data.message, 'error');
+      }
+    },
     async isLogged() {
       const token = Cookie.getToken()
       if (!token) return false
-       const meStore = useMeStore()
+      const meStore = useMeStore()
       try {
         await meStore.getMe()
         return true
@@ -52,9 +77,8 @@ export const useAuthStore = defineStore("auth", {
         return false
       }
     },
-
     async logout() {
-       try {
+      try {
         // se existir endpoint de logout
         const response = await AuthService.logout()
         return response;
@@ -67,7 +91,6 @@ export const useAuthStore = defineStore("auth", {
 
       return true
     },
-
 
     clearAuth() {
       this.user = [];

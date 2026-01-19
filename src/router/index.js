@@ -4,6 +4,8 @@ import Home from '@/views/Home/Home.vue'
 import AdminLayout from '@/layouts/AdminLayout.vue'
 import LoginLayout from '@/layouts/LoginLayout.vue'
 import { redirectIfAuthenticated, auth } from '@/middlewares/guard'
+import SiteLayout from '@/layouts/SiteLayout.vue'
+import LandingHome from '@/views/Landing/LandingHome.vue'
 
 
 
@@ -21,7 +23,7 @@ const routes = [
     ],
   },
   {
-    path: '/',
+    path: '/painel',
 
     beforeEnter: auth,
     component: AdminLayout,
@@ -31,7 +33,24 @@ const routes = [
         name: 'home',
         component: Home
       },
+      {
+        path: 'tenants',
+        name: 'tenants',
+        component: () => import('@/views/Tenant/Index.vue')
+      }
     ],
+  },
+  {
+    path: '/',
+    component: SiteLayout,
+    children: [
+      {
+        path: '',
+        name: 'landing',
+        component: LandingHome
+      },
+    ],
+
   },
 ]
 
