@@ -1,4 +1,4 @@
-<template>
+  <template>
   <v-btn
     :type="type"
     :color="color"
