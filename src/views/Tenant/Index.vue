@@ -1,76 +1,90 @@
 <template>
-  <v-card>
-    <v-card-title>
-      <v-row align="center">
-        <v-col>
-          <span class="text-h6">Empresas</span>
-        </v-col>
+  <v-container fluid>
+    <v-row>
+      <v-col>
+        <PageHeader
+          title="Empresas"
+          :breadcrumbs="[
+            { label: 'Home', to: '/painel' },
+            { label: 'Dashboard' }
+          ]"
+        />
+      </v-col>      
+    </v-row>
+   
+    <v-row>
+      <v-col>
+        <v-card >
+          <v-card-title>
+            <v-row align="center" no-gutters>
+              <!-- Botão Novo -->
+              <v-col cols="auto">
+                <ButtonLink
+                  :to="{ name: '' }"
+                  icon="mdi-plus"
+                  variant="outlined"
+                >
+                  Novo
+                </ButtonLink>
+              </v-col>
 
-        <v-col class="text-right">
-          <ButtonBase
-            type="button"
-            variant="outlined"
-            size="small"
-            icon="mdi-plus"
-          >
-            Novo
-          </ButtonBase>
-        </v-col>
-      </v-row>
-    </v-card-title>
+              <v-spacer />
 
-    <v-card-text>
-      <v-data-table
-        :headers="headers"
-        :items="data"
-        :search="search"
-        :loading="loadingStore.loading"
-        density="compact"
-        item-key="id"
-      >
-        <!-- Status tratado -->
-        <template #item.status="{ value }">
-          <v-chip
-            size="small"
-            :color="statusMap[value]?.color ?? 'grey'"
-            variant="flat"
-          >
-            {{ statusMap[value]?.label ?? value }}
-          </v-chip>
-        </template>
+              <!-- Search -->
+              <v-col cols="auto">
+                <SearchBar v-model="search" />
+              </v-col>
+            </v-row>
+          </v-card-title>
 
-        <template #item.actions="{ item }">
-          <v-btn
-            icon
-            size="small"
-            variant="text"
-            color="primary"
-            @click="editTenant(item)"
-          >
-            <v-icon>mdi-pencil</v-icon>
-          </v-btn>
+          <v-card-text>
+            <DataTable
+              :items="data"
+              :columns="headers"
+              :search="search"
+              :loading="loadingStore.isLoading"
+            >
+              <!-- Status -->
+              <template #item.status="{ value }">
+                <v-chip
+                  size="small"
+                  :color="statusMap[value]?.color ?? 'grey'"
+                  variant="flat"
+                >
+                  {{ statusMap[value]?.label ?? value }}
+                </v-chip>
+              </template>
 
-          <v-btn
-            icon
-            size="small"
-            variant="text"
-            color="error"
-            @click="deleteTenant(item)"
-          >
-            <v-icon>mdi-delete</v-icon>
-          </v-btn>
-        </template>
+              <!-- Ações -->
+              <template #item.actions="{ item }">
+                <v-btn
+                  icon
+                  size="small"
+                  variant="text"
+                  color="primary"
+                  @click="editTenant(item)"
+                >
+                  <v-icon>mdi-pencil</v-icon>
+                </v-btn>
 
+                <v-btn
+                  icon
+                  size="small"
+                  variant="text"
+                  color="error"
+                  @click="deleteTenant(item)"
+                >
+                  <v-icon>mdi-delete</v-icon>
+                </v-btn>
+              </template>
+            </DataTable>
 
-      
+          </v-card-text>
+        </v-card>
+      </v-col>
+    </v-row>
+  </v-container>
 
-        <!-- Estado vazio -->
-        <template #no-data>
-          Nenhuma empresa cadastrada
-        </template>
-      </v-data-table>
-    </v-card-text>
-  </v-card>
 </template>
 
 <script setup>

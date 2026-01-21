@@ -106,7 +106,7 @@
 
         <v-list-item
           title="Empresas"
-          prepend-icon="mdi-account-group"
+          prepend-icon="mdi-domain"
           to="/painel/tenants"
           router
         />
