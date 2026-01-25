@@ -14,6 +14,7 @@ export const useMeStore = defineStore("me", {
       await api.get('/auth/me')
 
         .then((r) => {
+
           authStore.setUser(r.data.data.user);
           authStore.setToken(r.data.data.token);
           authStore.setPreferences(r.data.data.preferences);

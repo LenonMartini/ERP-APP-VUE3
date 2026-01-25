@@ -34,9 +34,21 @@ const routes = [
         component: Home
       },
       {
-        path: 'tenants',
+        path: '/painel/tenants',
         name: 'tenants',
         component: () => import('@/views/Tenant/Index.vue')
+      },
+      {
+        path: 'tenant',
+        name: 'tenant.create',
+        component: () => import('@/views/Tenant/Create.vue')
+
+      },
+      {
+        path: 'tenant/:id',
+        name: 'tenant.update',
+        component: () => import('@/views/Tenant/Update.vue')
+
       }
     ],
   },

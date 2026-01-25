@@ -3,7 +3,7 @@
     <v-row>
       <v-col>
         <PageHeader
-          title="Empresas"
+          title="Tenants"
           :breadcrumbs="[
             { label: 'Home', to: '/painel' },
             { label: 'Dashboard' }
@@ -20,7 +20,7 @@
               <!-- Botão Novo -->
               <v-col cols="auto">
                 <ButtonLink
-                  :to="{ name: '' }"
+                  :to="{ name: 'tenant.create' }"
                   icon="mdi-plus"
                   variant="outlined"
                 >
@@ -59,7 +59,7 @@
                     <ButtonLinkIcon
                       icon="mdi-pencil"
                       color="primary"
-                      :to="{ name: '', params: {  } }"
+                      :to="{ name: 'tenant.update', params: {id: item.id } }"
                       variant="outlined"
                     />
 

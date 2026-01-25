@@ -21,6 +21,7 @@ export const useAuthStore = defineStore("auth", {
 
         if (response.data.token) {
 
+
           this.user = response.data.user
           this.token = response.data.token;
           this.preferences = response.data.preferences;
