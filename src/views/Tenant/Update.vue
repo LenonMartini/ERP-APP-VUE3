@@ -55,6 +55,14 @@
               />
 
               <!--Status-->
+              <v-switch
+                v-model="status"
+                :label="status ? 'Ativo' : 'Inativo'"
+                :color="status ? 'success' : 'error'"
+                inset
+              />
+
+
 
               <!-- Botão -->
               <ButtonBase
@@ -110,14 +118,17 @@ const schema = yup.object({
     .string()
     .required('Campo é obrigatório')
     .min(3, 'Campo deve ter no mínimo 3 caracteres'),
+  status: yup.boolean().required(),
 })
 
 /**
  * Form
  */
-const { handleSubmit, setValues } = useForm({
+const { handleSubmit, setValues, defineField } = useForm({
   validationSchema: schema,
 })
+
+const [status] = defineField('status')
 
 /**
  * Carregar Tenant
@@ -127,11 +138,14 @@ onMounted(async () => {
     loadingStore.isLoading = true
 
     const response = await TenantService.get(tenantId)
+    console.log(response)
 
     setValues({
       id: response.data.id,
       name: response.data.name,
       domain: response.data.domain,
+      status: response.data.status?.toUpperCase() === 'ACTIVE',
+
     })
 
   } catch (e) {
@@ -151,9 +165,11 @@ const onSubmit = handleSubmit(async (values) => {
     loadingStore.isLoading = true
     const payload = {
       name: values.name,
-      domain: values.domain
+      domain: values.domain,
+      status: values.status ? 'ACTIVE' : 'INACTIVE',
     }
-    await TenantService.update(tenantId, payload)
+    console.log(payload);
+    //await TenantService.update(tenantId, payload)
 
     store.message = 'Tenant atualizado com sucesso'
     store.color = 'success'
