@@ -13,7 +13,7 @@
         <PageHeader
           title="Atualizar Tenant"
           :breadcrumbs="[
-            { label: 'Tenants', to: '/tenant' },
+            { label: 'Tenants', to: '/painel/tenants' },
             { label: 'Home' }
           ]"
         />
@@ -138,7 +138,7 @@ onMounted(async () => {
     loadingStore.isLoading = true
 
     const response = await TenantService.get(tenantId)
-    console.log(response)
+
 
     setValues({
       id: response.data.id,
@@ -166,24 +166,30 @@ const onSubmit = handleSubmit(async (values) => {
     const payload = {
       name: values.name,
       domain: values.domain,
-      status: values.status ? 'ACTIVE' : 'INACTIVE',
+      status: values.status ? 'active' : 'inactive',
     }
-    console.log(payload);
-    //await TenantService.update(tenantId, payload)
+
+    await TenantService.update(tenantId, payload)
 
     store.message = 'Tenant atualizado com sucesso'
     store.color = 'success'
     store.show = true
 
-    // opcional: voltar para lista
-    // router.push('/tenant')
+    // Espera 2 segundos antes de redirecionar
+    setTimeout(() => {
+      store.clear()
+      router.push('/painel/tenants')
+    }, 2000)
 
   } catch (e) {
     store.message = e.message || 'Erro ao atualizar tenant'
     store.color = 'error'
     store.show = true
   } finally {
-    loadingStore.isLoading = false
+
+
+      loadingStore.isLoading = false
+
   }
 })
 </script>

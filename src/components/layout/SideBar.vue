@@ -1,143 +1,53 @@
 <template>
-  <v-navigation-drawer
-    v-model="localDrawer"
-    app
-    width="260"
-  >
-    <v-list nav density="comfortable">
+  <v-navigation-drawer v-model="localDrawer" app width="260">
+  <v-list nav density="comfortable">
 
-      <!-- Dashboard -->
+    <template v-for="menu in menus" :key="menu.id">
+
+      <!-- ITEM DIRETO -->
       <v-list-item
-        title="Dashboard"
-        prepend-icon="mdi-view-dashboard"
-        to="/painel"
-        router
+        v-if="!menu.children || menu.children.length === 0"
+        :title="menu.name"
+        :prepend-icon="menu.icon"
+        :to="menu.url"
+        link
       />
-       <!-- Cadastros com Submenu -->
+
+      <!-- ITEM COM FILHOS -->
       <v-list-group
-        value="registrations"
-        prepend-icon="mdi-database"
+        v-else
+        :value="menu.id"
       >
         <template #activator="{ props }">
           <v-list-item
             v-bind="props"
-            title="Cadastros"
+            :title="menu.name"
+            :prepend-icon="menu.icon"
           />
         </template>
 
-        <!-- Status -->
+        <!-- FILHOS -->
         <v-list-item
-          title="Status"
-          prepend-icon="mdi-flag"
-          to="/cadastros/status"
-          router
-        />
-
-        <!-- Categorias -->
-        <v-list-item
-          title="Categorias"
-          prepend-icon="mdi-shape"
-          to="/cadastros/categorias"
-          router
-        />
-
-        <!-- Clientes -->
-        <v-list-item
-          title="Clientes"
-          prepend-icon="mdi-account-group"
-          to="/cadastros/clientes"
-          router
-        />
-
-        <!-- Fornecedores -->
-        <v-list-item
-          title="Fornecedores"
-          prepend-icon="mdi-truck"
-          to="/cadastros/fornecedores"
-          router
-        />
-
-        <!-- Produtos -->
-        <v-list-item
-          title="Produtos"
-          prepend-icon="mdi-package-variant-closed"
-          to="/cadastros/produtos"
-          router
-        />
-
-        <!-- Unidades / Filiais -->
-        <v-list-item
-          title="Unidades"
-          prepend-icon="mdi-office-building"
-          to="/cadastros/unidades"
-          router
-        />
-
-        <!-- Formas de Pagamento -->
-        <v-list-item
-          title="Formas de Pagamento"
-          prepend-icon="mdi-credit-card"
-          to="/cadastros/formas-pagamento"
-          router
-        />
-
-        <!-- Condições de Pagamento -->
-        <v-list-item
-          title="Condições de Pagamento"
-          prepend-icon="mdi-calendar-clock"
-          to="/cadastros/condicoes-pagamento"
-          router
+          v-for="child in menu.children"
+          :key="child.id"
+          :title="child.name"
+          :prepend-icon="child.icon"
+          :to="child.url"
+          link
         />
 
       </v-list-group>
 
+    </template>
 
-      <!-- Configurações com Submenu -->
-      <v-list-group
-        value="settings"
-        prepend-icon="mdi-cog"
-      >
-        <template #activator="{ props }">
-          <v-list-item
-            v-bind="props"
-            title="Configurações"
-          />
-        </template>
+  </v-list>
+</v-navigation-drawer>
 
-        <v-list-item
-          title="Empresas"
-          prepend-icon="mdi-domain"
-          to="/painel/tenants"
-          router
-        />
-        <v-list-item
-          title="Usuarios"
-          prepend-icon="mdi-account-multiple"
-          to="/settings/profile"
-          router
-        />
-
-        <v-list-item
-          title="Permissões"
-          prepend-icon="mdi-shield-account"
-          to="/settings/permissions"
-          router
-        />
-
-        <v-list-item
-          title="Sistema"
-          prepend-icon="mdi-cogs"
-          to="/settings/system"
-          router
-        />
-      </v-list-group>
-
-    </v-list>
-  </v-navigation-drawer>
 </template>
 
 <script setup>
-import { computed } from 'vue';
+import { computed, onMounted, ref } from 'vue';
+import { MenuService } from '@/services/MenuService';
 
 const props = defineProps({
   drawer: {
@@ -145,6 +55,7 @@ const props = defineProps({
     required: true,
   },
 });
+const menus = ref([]);
 
 const emit = defineEmits(['update:drawer']);
 
@@ -152,4 +63,16 @@ const localDrawer = computed({
   get: () => props.drawer,
   set: (value) => emit('update:drawer', value),
 });
+
+onMounted(() => {
+  getMenus();
+});
+
+const getMenus = async() => {
+  const response = await MenuService.findAll()
+
+  menus.value = response;
+}
+
+
 </script>

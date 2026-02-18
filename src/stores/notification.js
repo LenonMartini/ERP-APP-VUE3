@@ -13,5 +13,11 @@ export const useNotificationStore = defineStore("notification", {
       this.color = color
       this.show = true
     },
+    clear() {
+      this.message = ''
+      this.color = 'success'
+      this.show = false
+    },
+
   },
 })
