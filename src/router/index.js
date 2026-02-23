@@ -49,6 +49,12 @@ const routes = [
         name: 'tenant.update',
         component: () => import('@/views/Tenant/Update.vue')
 
+      },
+      {
+        path: '/cadastros/status',
+        name: 'status',
+        component: () => import('@/views/Status/Index.vue')
+
       }
     ],
   },

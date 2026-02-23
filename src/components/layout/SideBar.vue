@@ -1,5 +1,5 @@
 <template>
-  <v-navigation-drawer v-model="localDrawer" app width="260">
+  <v-navigation-drawer v-model="localDrawer" app width="260" >
   <v-list nav density="comfortable">
 
     <template v-for="menu in menus" :key="menu.id">
