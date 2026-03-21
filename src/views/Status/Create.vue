@@ -1,5 +1,4 @@
 <template>
-
   <v-container fluid>
     <SnackBar
       :color="store.color"
@@ -9,100 +8,86 @@
     <v-row>
       <v-col>
         <PageHeader
-          title="Novo Tenant"
+          title="Novo Status"
           :breadcrumbs="[
-            { label: 'Tenants', to: '/painel/tenants' },
-            { label: 'Home' }
+            { label: 'Status', to: '/cadastros/status' },
+            { label: 'Home' },
           ]"
         />
       </v-col>
     </v-row>
     <v-row>
       <v-col>
-          <v-card>
-            <v-card-text>
-              <v-form @submit.prevent="onSubmit">
-                <Input
-                  name="name"
-                  label="Tenant"
-                  type="text"
-                  prepend-icon="mdi-home"
-                  class="mb-4"
+        <v-card>
+          <v-card-text>
+            <v-form @submit.prevent="onSubmit">
+              <Input
+                name="name"
+                label="Status"
+                type="text"
+                prepend-icon="mdi-check-circle"
+                class="mb-4"
+              />
 
-                />
-                <Input
-                  name="domain"
-                  label="Dominio"
-                  type="text"
-                  prepend-icon="mdi-domain"
-                  class="mb-6"
-                />
-
-                <ButtonBase
-                  icon="mdi-login"
-                  type="submit"
-                  color=""
-                  variant="outlined"
-                  size="large"
-                  :loading="loading"
-                  block
-                >
-                  Cadastrar
-                </ButtonBase>
-              </v-form>
-            </v-card-text>
-          </v-card>
+              <ButtonBase
+                icon="mdi-login"
+                type="submit"
+                color=""
+                variant="outlined"
+                size="large"
+                :loading="loading"
+                block
+              >
+                Cadastrar
+              </ButtonBase>
+            </v-form>
+          </v-card-text>
+        </v-card>
       </v-col>
     </v-row>
   </v-container>
 </template>
 <script setup>
-import { useForm } from 'vee-validate'
-import * as yup from 'yup'
-import Input from '@/components/Input/Input.vue'
-import ButtonBase from '@/components/Button/ButtonBase.vue'
-import { useLoadingStore } from '@/stores/loading'
-import SnackBar from '@/components/Message/SnackBar.vue'
-import { useNotificationStore } from '@/stores/notification'
-import { TenantService } from '@/services/TenantService'
+import { useForm } from "vee-validate";
+import * as yup from "yup";
+import Input from "@/components/Input/Input.vue";
+import ButtonBase from "@/components/Button/ButtonBase.vue";
+import { useLoadingStore } from "@/stores/loading";
+import SnackBar from "@/components/Message/SnackBar.vue";
+import { useNotificationStore } from "@/stores/notification";
+import { StatusService } from "@/services/StatusService";
 
-const loadingStore = useLoadingStore()
-const store = useNotificationStore()
+const loadingStore = useLoadingStore();
+const store = useNotificationStore();
 
 const loginSchema = yup.object({
   name: yup
     .string()
-    .required('Campo é obrigatório')
-    .min(3, 'Campo deve ter no mínimo 2 caracteres'),
-  domain: yup
-    .string()
-    .min(3, 'Campo deve ter no mínimo 2 caracteres')
-    .required('Campo é obrigatória'),
-})
+    .required("Campo é obrigatório")
+    .min(3, "Campo deve ter no mínimo 2 caracteres"),
+});
 
-const { handleSubmit, resetForm: resetTenantForm } = useForm({
+const { handleSubmit, resetForm: resetDataForm } = useForm({
   validationSchema: loginSchema,
-})
+});
 
 const onSubmit = handleSubmit(async (values) => {
   try {
-    loadingStore.isLoading = true
-    await TenantService.create(values)
+    loadingStore.isLoading = true;
+    await StatusService.create(values);
 
-    store.message = 'Tenant cadastrado com sucesso'
-    store.color = 'success'
-    store.show = true
+    store.message = "Registro cadastrado com sucesso";
+    store.color = "success";
+    store.show = true;
 
     // ✅ limpa os campos
-    resetTenantForm()
-
+    resetDataForm();
   } catch (e) {
-    store.message = e.message
-    store.color = 'error'
-    store.show = true
+    store.message = e.message;
+    store.color = "error";
+    store.show = true;
   } finally {
-    loadingStore.isLoading = false
+    loadingStore.isLoading = false;
   }
-})
+});
 </script>
-

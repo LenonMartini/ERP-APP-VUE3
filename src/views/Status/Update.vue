@@ -11,10 +11,10 @@
     <v-row>
       <v-col>
         <PageHeader
-          title="Atualizar Tenant"
+          title="Atualizar Status"
           :breadcrumbs="[
-            { label: 'Tenants', to: '/painel/tenants' },
-            { label: 'Home' }
+            { label: 'Status', to: '/cadastros/status' },
+            { label: 'Home' },
           ]"
         />
       </v-col>
@@ -39,30 +39,11 @@
               <!-- Nome -->
               <Input
                 name="name"
-                label="Tenant"
+                label="Status"
                 type="text"
-                prepend-icon="mdi-home"
+                prepend-icon="mdi-check-circle"
                 class="mb-4"
               />
-
-              <!-- Domínio -->
-              <Input
-                name="domain"
-                label="Domínio"
-                type="text"
-                prepend-icon="mdi-domain"
-                class="mb-6"
-              />
-
-              <!--Status-->
-              <v-switch
-                v-model="status"
-                :label="status ? 'Ativo' : 'Inativo'"
-                :color="status ? 'success' : 'error'"
-                inset
-              />
-
-
 
               <!-- Botão -->
               <ButtonBase
@@ -84,26 +65,24 @@
 </template>
 
 <script setup>
-import { onMounted } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
-import { useForm } from 'vee-validate'
-import * as yup from 'yup'
+import { onMounted } from "vue";
+import { useRoute, useRouter } from "vue-router";
+import { useForm } from "vee-validate";
+import * as yup from "yup";
 
-
-
-import { useLoadingStore } from '@/stores/loading'
-import { useNotificationStore } from '@/stores/notification'
-import { TenantService } from '@/services/TenantService'
+import { useLoadingStore } from "@/stores/loading";
+import { useNotificationStore } from "@/stores/notification";
+import { StatusService } from "@/services/StatusService";
 
 /**
  * Stores e Router
  */
-const route = useRoute()
-const router = useRouter()
-const loadingStore = useLoadingStore()
-const store = useNotificationStore()
+const route = useRoute();
+const router = useRouter();
+const loadingStore = useLoadingStore();
+const store = useNotificationStore();
 
-const tenantId = route.params.id
+const dataId = route.params.id;
 
 /**
  * Validação
@@ -112,84 +91,66 @@ const schema = yup.object({
   id: yup.string().required(),
   name: yup
     .string()
-    .required('Campo é obrigatório')
-    .min(3, 'Campo deve ter no mínimo 3 caracteres'),
-  domain: yup
-    .string()
-    .required('Campo é obrigatório')
-    .min(3, 'Campo deve ter no mínimo 3 caracteres'),
-  status: yup.boolean().required(),
-})
+    .required("Campo é obrigatório")
+    .min(3, "Campo deve ter no mínimo 3 caracteres"),
+});
 
 /**
  * Form
  */
 const { handleSubmit, setValues, defineField } = useForm({
   validationSchema: schema,
-})
-
-const [status] = defineField('status')
+});
 
 /**
  * Carregar Tenant
  */
 onMounted(async () => {
   try {
-    loadingStore.isLoading = true
+    loadingStore.isLoading = true;
 
-    const response = await TenantService.get(tenantId)
-
+    const response = await StatusService.get(dataId);
 
     setValues({
-      id: response.data.id,
-      name: response.data.name,
-      domain: response.data.domain,
-      status: response.data.status?.toUpperCase() === 'ACTIVE',
-
-    })
-
+      id: response.id,
+      name: response.name,
+    });
   } catch (e) {
-    store.message = 'Erro ao carregar tenant'
-    store.color = 'error'
-    store.show = true
+    store.message = "Erro ao carregar registro";
+    store.color = "error";
+    store.show = true;
   } finally {
-    loadingStore.isLoading = false
+    loadingStore.isLoading = false;
   }
-})
+});
 
 /**
  * Submit UPDATE
  */
 const onSubmit = handleSubmit(async (values) => {
   try {
-    loadingStore.isLoading = true
+    loadingStore.isLoading = true;
     const payload = {
       name: values.name,
-      domain: values.domain,
-      status: values.status ? 'active' : 'inactive',
-    }
+    };
 
-    await TenantService.update(tenantId, payload)
+    await StatusService.update(dataId, payload);
 
-    store.message = 'Tenant atualizado com sucesso'
-    store.color = 'success'
-    store.show = true
+    store.message = "Registro atualizado com sucesso";
+    store.color = "success";
+    store.show = true;
 
     // Espera 2 segundos antes de redirecionar
     setTimeout(() => {
-      store.clear()
-      router.push('/painel/tenants')
-    }, 2000)
-
+      store.clear();
+      router.push("/cadastros/status");
+    }, 2000);
   } catch (e) {
-    store.message = e.message || 'Erro ao atualizar tenant'
-    store.color = 'error'
-    store.show = true
+    store.message = e.message || "Erro ao atualizar registro";
+    store.color = "error";
+    store.show = true;
   } finally {
-
-
-      loadingStore.isLoading = false
-
+    loadingStore.isLoading = false;
   }
-})
+});
 </script>
